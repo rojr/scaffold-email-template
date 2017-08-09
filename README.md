@@ -1,2 +1,2 @@
-# scaffold-email-template
-A Rhubarb Scaffold that aspires to make editing email templates easy for users
+# Email Template Scaffold
+A Rhubarb Scaffold that aspires to make the editing of email templates easy for users 
