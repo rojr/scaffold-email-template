@@ -8,7 +8,7 @@ class EmailTemplateSchema extends SolutionSchema
 {
     public function __construct()
     {
-        parent::__construct(0.1);
+        parent::__construct(0.2);
 
         $this->addModel('EmailTemplate', EmailTemplate::class);
     }
