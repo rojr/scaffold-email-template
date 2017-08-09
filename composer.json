@@ -3,7 +3,7 @@
     "license": "GNU General Public License v3.0",
     "autoload": {
         "psr-4": {
-            "Rojr\\Scaffold\\Email\\Templates": "src/"
+            "Rojr\\Scaffold\\Email\\Templates\\": "src/"
         }
     },
     "require": {
