@@ -84,7 +84,7 @@ class EmailTemplate extends Model
      */
     public function getTemplatedEmail()
     {
-        return new ($this->TemplateClassPath)();
+        return new $this->TemplateClassPath();
     }
 
     public static function getEmailTemplateFromClassPath($path) {
