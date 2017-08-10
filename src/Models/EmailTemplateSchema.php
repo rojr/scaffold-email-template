@@ -12,4 +12,15 @@ class EmailTemplateSchema extends SolutionSchema
 
         $this->addModel('EmailTemplate', EmailTemplate::class);
     }
+
+    protected function defineRelationships()
+    {
+        $this->declareOneToManyRelationships(
+            [
+                'EmailTemplate' => [
+                    'ChildEmailTemplates' => 'EmailTemplate.ParentTemplateID:ParentTemplate'
+                ]
+            ]
+        );
+    }
 }

@@ -13,6 +13,7 @@ use Rhubarb\Stem\Schema\Columns\ForeignKeyColumn;
 use Rhubarb\Stem\Schema\Columns\LongStringColumn;
 use Rhubarb\Stem\Schema\Columns\StringColumn;
 use Rhubarb\Stem\Schema\ModelSchema;
+use Rojr\Scaffold\Email\Templates\Emails\TemplatedEmail;
 use Rojr\Scaffold\Email\Templates\EmailTemplateModule;
 
 /**
@@ -23,9 +24,11 @@ use Rojr\Scaffold\Email\Templates\EmailTemplateModule;
  * @property string $Subject Repository field
  * @property string $FromAddress Repository field
  * @property string $Content Repository field
- * @property int $ParentEmailTemplate Repository field
+ * @property int $ParentEmailTemplateID Repository field
  * @property bool $IsBase Repository field
  * @property string $TemplateClassPath Repository field
+ * @property-read EmailTemplate[]|\Rhubarb\Stem\Collections\RepositoryCollection $ChildEmailTemplates Relationship
+ * @property-read EmailTemplate $ParentTemplate Relationship
  */
 class EmailTemplate extends Model
 {
@@ -39,7 +42,7 @@ class EmailTemplate extends Model
             new StringColumn('Subject', 500),
             new StringColumn('FromAddress', 100),
             new LongStringColumn('Content'),
-            new ForeignKeyColumn('ParentEmailTemplate'),
+            new ForeignKeyColumn('ParentEmailTemplateID'),
             new BooleanColumn('IsBase')
         );
 
@@ -63,7 +66,23 @@ class EmailTemplate extends Model
         } catch (RecordNotFoundException $ex) {
         }
 
+        if ($this->TemplateClassPath) {
+            if (!class_exists($this->TemplateClassPath)) {
+                $errors['TemplateClassPath'] = 'Template Class Path is not a valid Template Object';
+            }
+        } else {
+            $errors['TemplateClassPath'] = 'Template Class Path is required to be set';
+        }
+
         return $errors;
+    }
+
+    /**
+     * @return TemplatedEmail
+     */
+    public function getTemplatedEmail()
+    {
+        return new ($this->TemplateClassPath)();
     }
 
     public static function getEmailTemplateFromClassPath($path) {
