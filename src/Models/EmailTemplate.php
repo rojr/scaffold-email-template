@@ -6,6 +6,7 @@ use Rhubarb\Stem\Exceptions\RecordNotFoundException;
 use Rhubarb\Stem\Filters\AndGroup;
 use Rhubarb\Stem\Filters\Equals;
 use Rhubarb\Stem\Filters\Not;
+use Rhubarb\Stem\Filters\OneOf;
 use Rhubarb\Stem\Models\Model;
 use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
 use Rhubarb\Stem\Schema\Columns\BooleanColumn;
@@ -28,7 +29,8 @@ use Rojr\Scaffold\Email\Templates\EmailTemplateModule;
  * @property bool $IsBase Repository field
  * @property string $TemplateClassPath Repository field
  * @property-read EmailTemplate[]|\Rhubarb\Stem\Collections\RepositoryCollection $ChildEmailTemplates Relationship
- * @property-read EmailTemplate $ParentTemplate Relationship
+ * @property-read EmailTemplate $ParentEmailTemplate Relationship
+ * @property-read TemplatedEmail $TemplatedEmail {@link getTemplatedEmail()}
  */
 class EmailTemplate extends Model
 {
@@ -79,6 +81,16 @@ class EmailTemplate extends Model
         return $errors;
     }
 
+    protected function beforeSave()
+    {
+        if ($this->isNewRecord() && !$this->ParentEmailTemplateID) {
+            try {
+                $this->ParentEmailTemplateID = EmailTemplate::findFirst(new Equals('IsBase', true))->UniqueIdentifier;
+            } catch (RecordNotFoundException $ex) {
+            }
+        }
+    }
+
     /**
      * @param TemplatedEmail $childTemplate
      * @return TemplatedEmail
@@ -98,7 +110,14 @@ class EmailTemplate extends Model
 
     public static function checkRecords($oldVersion, $newVersion)
     {
-        foreach (EmailTemplateModule::getRegisteredEmailTemplates() as $template) {
+        $templateClassNames = EmailTemplateModule::getRegisteredEmailTemplates();
+
+        //Clean up rougue templates before adding new ones
+        foreach (EmailTemplate::find(new Not(new OneOf('TemplateClassPath', $templateClassNames))) as $template) {
+            $template->delete();
+        }
+
+        foreach ($templateClassNames as $template) {
             if (!self::getEmailTemplateFromClassPath($template)) {
                 $emailTemplate = new EmailTemplate();
                 $emailTemplate->TemplateClassPath = $template;

@@ -18,7 +18,7 @@ class EmailTemplateSchema extends SolutionSchema
         $this->declareOneToManyRelationships(
             [
                 'EmailTemplate' => [
-                    'ChildEmailTemplates' => 'EmailTemplate.ParentTemplateID:ParentTemplate'
+                    'ChildEmailTemplates' => 'EmailTemplate.ParentEmailTemplateID:ParentEmailTemplate'
                 ]
             ]
         );

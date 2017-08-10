@@ -55,7 +55,7 @@ abstract class TemplatedEmail extends TemplateEmail
         if (!$this->requiresParent) {
             return $this->getTemplateContent();
         } else {
-            return $this->templateObject->ParentTemplate->getTemplatedEmail()->getHtml();
+            return $this->templateObject->ParentEmailTemplate->getTemplatedEmail($this->templateObject)->getHtml();
         }
     }
 
