@@ -30,7 +30,7 @@ abstract class TemplatedEmail extends TemplateEmail
         }
 
         if ($this->childTemplate) {
-            $recipientData['ChildContent'] = $this->childTemplate->getTemplatedEmail()->getHtml();
+            $recipientData['ChildContent'] = $this->childTemplate->getTemplatedEmail()->getTemplateContent();
         } else {
             $recipientData['ChildContent'] = '';
         }
@@ -42,13 +42,18 @@ abstract class TemplatedEmail extends TemplateEmail
 
     protected function getTextTemplateBody()
     {
-        return strip_tags($this->getTextTemplateBody());
+        return strip_tags($this->getHtmlTemplateBody());
+    }
+
+    protected function getTemplateContent()
+    {
+        return $this->templateObject->Content;
     }
 
     protected function getHtmlTemplateBody()
     {
         if (!$this->requiresParent) {
-            return $this->templateObject->Content;
+            return $this->getTemplateContent();
         } else {
             return $this->templateObject->ParentTemplate->getTemplatedEmail()->getHtml();
         }

@@ -80,11 +80,12 @@ class EmailTemplate extends Model
     }
 
     /**
+     * @param TemplatedEmail $childTemplate
      * @return TemplatedEmail
      */
-    public function getTemplatedEmail()
+    public function getTemplatedEmail($childTemplate = null)
     {
-        return new $this->TemplateClassPath();
+        return new $this->TemplateClassPath($childTemplate);
     }
 
     public static function getEmailTemplateFromClassPath($path) {
