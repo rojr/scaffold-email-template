@@ -53,17 +53,19 @@ class EmailTemplate extends Model
     {
         $errors = parent::getConsistencyValidationErrors();
 
-        try {
-            self::findFirst(
-                new AndGroup(
-                    [
-                        new Equals('IsBase', true),
-                        new Not(new Equals($this->getUniqueIdentifierColumnName(), $this->getUniqueIdentifier())),
-                    ]
-                ));
+        if ($this->IsBase) {
+            try {
+                self::findFirst(
+                    new AndGroup(
+                        [
+                            new Equals('IsBase', true),
+                            new Not(new Equals($this->getUniqueIdentifierColumnName(), $this->getUniqueIdentifier())),
+                        ]
+                    ));
 
-            $errors['IsBase'] = 'Base template already set. There can only be one.';
-        } catch (RecordNotFoundException $ex) {
+                $errors[ 'IsBase' ] = 'Base template already set. There can only be one.';
+            } catch (RecordNotFoundException $ex) {
+            }
         }
 
         if ($this->TemplateClassPath) {
