@@ -5,6 +5,11 @@ Theory behind it is that every TemplatedFile would have a Template Object behind
 
 Each Email Template can have a parent, but the parent must support having children with a `{ChildContent}` element somewhere in the template.
 
+## Usage
+
+As with all Rhubarb repos, this one requires [https://getcomposer.org/download/](composer).
+
+Once that's in, simply `composer require rojr/scaffold-email-templates`
 
 ## Future Ideas
 
