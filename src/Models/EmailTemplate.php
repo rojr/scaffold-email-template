@@ -93,11 +93,12 @@ class EmailTemplate extends Model
 
     /**
      * @param TemplatedEmail $childTemplate
+     * @param array $recipientData
      * @return TemplatedEmail
      */
-    public function getTemplatedEmail($childTemplate = null)
+    public function getTemplatedEmail($childTemplate = null, $recipientData = [])
     {
-        return new $this->TemplateClassPath($childTemplate);
+        return new $this->TemplateClassPath($childTemplate, $recipientData);
     }
 
     public static function getEmailTemplateFromClassPath($path) {

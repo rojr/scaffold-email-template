@@ -11,10 +11,14 @@ abstract class TemplatedEmail extends TemplateEmail
     private $templateObject = null;
     /** @var EmailTemplate|null  */
     private $childTemplate = null;
+    /** @var TemplatedEmail|null */
+    private $childTemplatedEmail = null;
 
     private $requiresParent = false;
 
-    public function __construct($childTemplate = null)
+    private $recipientData = [];
+
+    public function __construct($childTemplate = null, $recipientData = [])
     {
         $this->templateObject = EmailTemplate::getEmailTemplateFromClassPath(get_class($this));
 
@@ -23,21 +27,25 @@ abstract class TemplatedEmail extends TemplateEmail
         }
 
         $this->childTemplate = $childTemplate;
-        $recipientData = [];
 
         if ($this->templateObject->ParentEmailTemplateID != 0) {
             $this->requiresParent = true;
         }
 
         if ($this->childTemplate) {
-            $recipientData['ChildContent'] = $this->childTemplate->getTemplatedEmail()->getTemplateContent();
+            $this->childTemplatedEmail = $this->childTemplate->getTemplatedEmail();
+            $recipientData['ChildContent'] = $this->childTemplatedEmail->getTemplateContent();
         } else {
             $recipientData['ChildContent'] = '';
         }
 
+        $recipientData['Subject'] = $this->getSubject();
+
         //TODO add model loading, so values get auto inserted
 
         parent::__construct($recipientData);
+
+        $this->recipientData = $recipientData;
     }
 
     protected function getTextTemplateBody()
@@ -55,7 +63,7 @@ abstract class TemplatedEmail extends TemplateEmail
         if (!$this->requiresParent) {
             return $this->getTemplateContent();
         } else {
-            return $this->templateObject->ParentEmailTemplate->getTemplatedEmail($this->templateObject)->getHtml();
+            return $this->templateObject->ParentEmailTemplate->getTemplatedEmail($this->templateObject, $this->recipientData)->getHtml();
         }
     }
 
@@ -64,6 +72,15 @@ abstract class TemplatedEmail extends TemplateEmail
         return $this->templateObject->Subject;
     }
 
+    public function getSubject()
+    {
+        if ($this->childTemplate) {
+            return $this->childTemplatedEmail->getSubject();
+        }
+        return parent::getSubject();
+    }
+
     public static abstract function getDefaultHtml();
+
     public static abstract function isBase();
 }
