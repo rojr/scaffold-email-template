@@ -1,13 +1,14 @@
 {
     "name": "rojr/scaffold-email-templates",
     "license": "GNU General Public License v3.0",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Rojr\\Scaffold\\Email\\Templates\\": "src/"
         }
     },
     "require": {
-        "rhubarbphp/rhubarb": "dev-feature/SmarterTemplateParsing@dev as 1.3.14",
+        "rhubarbphp/rhubarb": "dev-feature/SmarterTemplateParsing as 1.3.14",
         "rhubarbphp/module-stem": "^1.3.14",
         "rhubarbphp/module-leaf": "^1.1.10"
     }
